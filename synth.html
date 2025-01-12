@@ -9,11 +9,11 @@
     <body>
         <center>
             <h3>Progressive loading tool</h3>
-            Lucas Barcellos Oliveira - MSc Candidate in Systems Engineering and Computing - COPPE/UFRJ
+            Lucas Barcellos Oliveira - MSc Candidate in Systems Engineering and Computer Science - COPPE/UFRJ
         </center>
         Mode: <textarea id="oper" rows="1" cols="8" placeholder="sample">sample</textarea>
         Attribute: <textarea id="attribute" rows="1" cols="5" placeholder="N1">N1</textarea>
-        Symbol: <textarea id="symbol" rows="1" cols="5" placeholder="all">all</textarea>
+        <!--Symbol: <textarea id="symbol" rows="1" cols="5" placeholder="all">all</textarea>-->
         Aggregation: <textarea id="agg" rows="1" cols="5" placeholder="mean">mean</textarea>
         Precision (% or # of coefficients): <textarea id="precision" rows="1" cols="3" placeholder="10">10</textarea>
         Query: <textarea id="query" rows="1" cols="5" placeholder="N2<40"></textarea>
@@ -92,16 +92,16 @@
 
             observer.observe({type:"resource"});
 
-            async function getData(oper,attribute,symbol,agg,precision,query){
+            async function getData(oper,attribute,agg,precision,query){
             //for (let i=0;i<measures;i++){
                 if(oper=="fft"){
-                    getDataFFT(attribute,symbol,agg,precision,query);
+                    getDataFFT(attribute,agg,precision,query);
                     return;
                 }
                 //média ponderada dos throughputs
                 //enviar requests ao mesmo tempo vs sequenciais
                 //mencionar exemplo de tempo de renderização
-                fetch("http://127.0.0.1:8000/prices/"+oper+"/"+attribute+"/"+symbol+"/"+agg+"/"+precision+"/"+query).then(resp=>resp.json()).then(json=>{
+                fetch("http://127.0.0.1:8000/"+oper+"/"+attribute+"/"+agg+"/"+precision+"/"+query).then(resp=>resp.json()).then(json=>{
                     data=JSON.parse(json);
                     update(data,attribute);
                 }).catch(console.error);
@@ -115,11 +115,11 @@
             //setTimeout(()=>getData(70),6000);
             //setTimeout(()=>getData(100),8000);
 
-            submit.onclick=function(){getData(oper.value,attribute.value,symbol.value,agg.value,precision.value,query.value)};
+            submit.onclick=function(){getData(oper.value,attribute.value,agg.value,precision.value,query.value)};
 
-            function getDataFFT(attribute,symbol,agg,coeffs,query){
+            function getDataFFT(attribute,agg,coeffs,query){
  
-                fetch("http://127.0.0.1:8000/fft/prices/"+attribute+"/"+symbol+"/"+agg+"/"+coeffs).then(resp=>resp.json()).then(list=>{
+                fetch("http://127.0.0.1:8000/fft/"+attribute+"/"+agg+"/"+coeffs).then(resp=>resp.json()).then(list=>{
                     //data=JSON.parse(json);
                     //update(data);
                     let date=JSON.parse(list[0]);
