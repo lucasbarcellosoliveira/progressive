@@ -135,7 +135,7 @@
                     //}
                     list=list.map(d=>mathjs.complex({"re":d[0],"im":d[1]}));
                     let inverse=mathjs.ifft(list);
-                    update(date.map((d,i)=>({date:d,"close":inverse[i].re})));
+                    update(date.map((d,i)=>({date:d,[attribute]:inverse[i].re})),attribute);
                 }).catch(console.error);
 
                 observer.observe({type:"resource"});
