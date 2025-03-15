@@ -543,3 +543,7 @@ async def root(experiments:int,attribute:str,agg:str,precision:float,query:str):
         diff=[delta(full, attribute, date, n) for date, n in zip(computed["date"],computed[attribute])]
         mse+=[np.sum(diff)/len(diff)]
     return [np.mean(times),np.std(times),np.mean(coverage),np.std(coverage),np.mean(mse),np.std(mse)]
+
+if __name__=="__main__":
+    import uvicorn
+    uvicorn.run("main:app")
