@@ -40,7 +40,7 @@ print(synth.describe())
 #print(mean, var, skew, kurt)
 
 prices = pd.read_csv("archive/prices.csv")
-prices["date"]=pd.to_datetime(prices["date"])
+prices["date"]=pd.to_datetime(prices["date"],format="ISO8601")
 
 groups=prices.groupby(prices.date)
 
@@ -61,7 +61,7 @@ poly=PolynomialFeatures(degree=5,include_bias=False)
 reg=SVR(degree=20,C=2000000)
 
 #HERE: switch to synthetic data!
-prices=synth
+#prices=synth
 
 #symbols=prices["symbol"].unique()
 #symbolsEnc=OneHotEncoder()
@@ -400,3 +400,7 @@ async def root(attribute:str,agg:str,precision:float,query:str):
     print("\nMSE:")
     print(mse)
     return p
+
+if __name__=="__main__":
+    import uvicorn
+    uvicorn.run("main:app")
