@@ -403,4 +403,4 @@ async def root(attribute:str,agg:str,precision:float,query:str):
 
 if __name__=="__main__":
     import uvicorn
-    uvicorn.run("main:app")
+    uvicorn.run("OLDmain:app")
