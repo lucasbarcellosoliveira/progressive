@@ -7,3 +7,4 @@ numpy==2.2.1
 torch==2.5.1+cu124
 scikit-learn==1.6.0
 scipy==1.15.0
+pywavelets==1.8.0
