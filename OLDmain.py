@@ -18,6 +18,7 @@ from sklearn.svm import SVR
 import scipy
 import random
 from datetime import timedelta
+import pywt
 
 #100.000.000 é limite
 quant=100000
@@ -400,6 +401,25 @@ async def root(attribute:str,agg:str,precision:float,query:str):
     print("\nMSE:")
     print(mse)
     return p
+
+@app.get("/prices/wavelet/{attribute}/{wavelet}/{agg}/{coefficients}")
+async def root(attribute:str,wavelet:str,agg:str,coefficients:int):
+    start=time.process_time()
+    ret=prices[["date",attribute]].groupby("date").agg(agg).reset_index()
+    #(cA,cD)=pywt.dwt(ret[attribute],wavelet)
+    #np.put(cA,range(10,cA.size),0)
+    #ret[attribute]=pywt.idwt(cA,None,wavelet)
+    coeffs=pywt.wavedec(ret[attribute],wavelet)
+    for i in range(coefficients,len(coeffs)):
+        coeffs[i] = np.zeros_like(coeffs[i])
+    ret[attribute]=pywt.waverec(coeffs,wavelet)
+    full=prices.groupby("date").mean(attribute).reset_index()[["date",attribute]]
+    diff=[delta(full, attribute, date, n) for date, n in zip(ret["date"],ret[attribute])]
+    mse=np.sum(diff)/len(diff)
+    print(mse)
+    ret=ret.to_json(orient="records")
+    print(time.process_time()-start)
+    return ret
 
 if __name__=="__main__":
     import uvicorn
