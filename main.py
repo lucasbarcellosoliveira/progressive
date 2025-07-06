@@ -15,6 +15,8 @@ import scipy
 import random
 from datetime import timedelta
 from io import StringIO
+import pywt
+import sys
 
 #100.000.000 é limite
 quant=100000
@@ -543,6 +545,23 @@ async def root(experiments:int,attribute:str,agg:str,precision:float,query:str):
         diff=[delta(full, attribute, date, n) for date, n in zip(computed["date"],computed[attribute])]
         mse+=[np.sum(diff)/len(diff)]
     return [np.mean(times),np.std(times),np.mean(coverage),np.std(coverage),np.mean(mse),np.std(mse)]
+
+@app.get("/wavelet/{attribute}/{agg}/{coefficients}/{wavelet}")
+async def root(attribute:str,agg:str,coefficients:int,wavelet:str):
+    start=time.process_time()
+    ret=synth[["date",attribute]].groupby("date").agg(agg).reset_index()
+    coeffs=pywt.wavedec(ret[attribute],wavelet)
+    for i in range(coefficients,len(coeffs)):
+        coeffs[i] = np.zeros_like(coeffs[i])
+    print (sys.getsizeof(coeffs[:coefficients]))
+    ret[attribute]=pywt.waverec(coeffs,wavelet)
+    full=synth.groupby("date").mean(attribute).reset_index()[["date",attribute]]
+    diff=[delta(full, attribute, date, n) for date, n in zip(ret["date"],ret[attribute])]
+    mse=np.sum(diff)/len(diff)
+    print(mse)
+    ret=ret.to_json(orient="records")
+    print(time.process_time()-start)
+    return ret
 
 if __name__=="__main__":
     import uvicorn
