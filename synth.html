@@ -56,7 +56,7 @@
             svg.append("g")
                 .attr("transform", `translate(0,${height - marginBottom})`)
                 .style("font-size","32px")
-                .call(d3.axisBottom(x).ticks(width / 160).tickSizeOuter(0).tickFormat(locale.format("%b")));
+                .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0).tickFormat(locale.format("%b")));
 
             svg.append("g")
                 .attr("transform", `translate(${marginLeft},0)`)
@@ -83,7 +83,7 @@
                             .attr("fill","steelblue")
                             .attr("cx",d=>x(d.date))
                             .attr("cy",d=>y(d[attribute]))
-                            .attr("r",2),
+                            .attr("r",3),
                         update => update
                             .call(update => update.transition(t)
                                 .attr("cx",d=>x(d.date))
