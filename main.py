@@ -138,6 +138,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def add_timing_header(request, call_next):
+    response = await call_next(request)
+    response.headers['Timing-Allow-Origin'] = '*'
+    return response
+
 def delta(full, attribute, date, n):
     return (full[full["date"]==date][attribute]-n)**2
 
@@ -566,3 +572,4 @@ async def root(attribute:str,agg:str,coefficients:int,wavelet:str):
 if __name__=="__main__":
     import uvicorn
     uvicorn.run("main:app")
+
